@@ -63,7 +63,14 @@ const userController = {
     try {
       const userId = req.params.id
       const [user, comments] = await Promise.all([
-        User.findByPk(req.params.id, { raw: true }),
+        User.findByPk(req.params.id, {
+          include: [
+            { model: User, as: 'Followers' },
+            { model: User, as: 'Followings' },
+            { model: Restaurant, as: 'FavoritedRestaurants' }
+          ],
+          nest: true
+        }),
         Comment.findAll({
           raw: true,
           nest: true,
@@ -74,7 +81,9 @@ const userController = {
 
       if (!user) throw new Error("User doesn't exists!")
 
-      return res.render('users/profile', { user, comments })
+      const userData = user.toJSON()
+
+      return res.render('users/profile', { user: userData, comments })
     } catch (error) {
       return next(error)
     }
