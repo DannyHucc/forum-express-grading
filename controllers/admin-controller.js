@@ -17,7 +17,7 @@ const adminController = {
 
   createRestaurant: async (req, res, next) => {
     try {
-      const categories = Category.findAll({
+      const categories = await Category.findAll({
         raw: true
       })
       return res.render('admin/create-restaurant', { categories })
