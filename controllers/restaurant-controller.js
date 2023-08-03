@@ -79,14 +79,16 @@ const restaurantController = {
     try {
       const restaurant = await Restaurant.findByPk(req.params.id,
         {
-          include: Category,
-          raw: true,
-          nest: true
+          include: [
+            Category,
+            { model: Comment, include: User },
+            { model: User, as: 'FavoritedUsers' }
+          ]
         })
 
       if (!restaurant) throw new Error("Restaurant didn't exist!")
 
-      return res.render('dashboard', { restaurant })
+      return res.render('dashboard', { restaurant: restaurant.toJSON() })
     } catch (error) {
       return next(error)
     }
