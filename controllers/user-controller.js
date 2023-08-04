@@ -114,6 +114,7 @@ const userController = {
       ])
 
       if (!user) throw new Error("User doesn't exists!")
+      if (Number(req.user.id) !== Number(req.params.id)) throw new Error('Edit self profile only!')
 
       await user.update({
         name,
